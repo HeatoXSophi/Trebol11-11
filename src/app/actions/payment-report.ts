@@ -45,6 +45,6 @@ export async function createPaymentReport(formData: FormData) {
 
     } catch (error) {
         console.error("Error creating payment:", error)
-        return { success: false, error: "Error creating payment" }
+        return { success: false, error: "Error: " + (error instanceof Error ? error.message : String(error)) }
     }
 }
