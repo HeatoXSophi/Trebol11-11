@@ -271,10 +271,25 @@ export async function getAllUsers() {
         })
         return users
     } catch (error) {
-        console.error("Get All Users Error:", error)
+        // ... previous code
         return []
     }
 }
+
+export async function deleteUser(userId: string) {
+    try {
+        await prisma.user.delete({ where: { id: userId } })
+        revalidatePath("/admin/dashboard")
+        return { success: true }
+    } catch (error) {
+        console.error("Delete user error", error)
+        return { success: false, error: "Error eliminando usuario" }
+    }
+}
+
+
+
+
 
 export async function getSalesSummary() {
     try {

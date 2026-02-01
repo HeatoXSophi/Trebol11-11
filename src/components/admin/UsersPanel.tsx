@@ -5,7 +5,7 @@ import { getAllUsers } from "@/app/actions/admin"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, Ticket } from "lucide-react"
+import { Loader2, Ticket, Trash2 } from "lucide-react"
 
 export function UsersPanel() {
     const [users, setUsers] = useState<any[]>([])
@@ -45,6 +45,19 @@ export function UsersPanel() {
                                     ${user.balance.toFixed(2)}
                                 </div>
                             </div>
+                            <button
+                                onClick={async () => {
+                                    if (confirm('¿Borrar usuario permanentemente?')) {
+                                        setLoading(true)
+                                        await import("@/app/actions/admin").then(m => m.deleteUser(user.id))
+                                        window.location.reload()
+                                    }
+                                }}
+                                className="ml-auto p-2 text-zinc-500 hover:text-red-500 hover:bg-white/5 rounded-full transition-colors"
+                                title="Eliminar Usuario"
+                            >
+                                <Trash2 className="w-4 h-4" />
+                            </button>
                         </div>
                     ))}
                 </div>
