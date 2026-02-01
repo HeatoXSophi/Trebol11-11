@@ -7,6 +7,7 @@ const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 export async function POST(req: NextRequest) {
     try {
         const update = await req.json();
+        console.log("Telegram Webhook Received:", JSON.stringify(update));
 
         // Handle Callback Query (Button Click)
         if (update.callback_query) {
@@ -15,9 +16,14 @@ export async function POST(req: NextRequest) {
             const chatId = query.message.chat.id;
             const messageId = query.message.message_id;
 
-            const [action, paymentId] = data.split(":");
+            console.log(`Callback Data: ${data}`);
+
+            const parts = data.split(":");
+            const action = parts[0];
+            const paymentId = parts[1];
 
             if (!paymentId) {
+                console.warn("Invalid callback data format");
                 return NextResponse.json({ ok: true });
             }
 
@@ -28,14 +34,15 @@ export async function POST(req: NextRequest) {
             });
 
             if (!payment) {
+                console.error("Payment not found:", paymentId);
                 await answerCallback(query.id, "Pago no encontrado");
                 return NextResponse.json({ ok: true });
             }
 
+            console.log(`Processing ${action} for payment ${paymentId} (Status: ${payment.status})`);
+
             if (payment.status !== "PENDING") {
                 await answerCallback(query.id, "Este pago ya fue procesado");
-                // Update message to reflect status
-                await editMessageCaption(chatId, messageId, `⚠️ Este pago ya está ${payment.status === 'APPROVED' ? 'APROBADO' : 'RECHAZADO'}`);
                 return NextResponse.json({ ok: true });
             }
 
