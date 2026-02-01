@@ -29,7 +29,12 @@ export function LoginForm() {
                     <Input name="identification" placeholder="V-12345678" className="bg-black/50 border-zinc-700 h-11" required />
                 </div>
                 <div className="space-y-2">
-                    <Label>Contraseña</Label>
+                    <div className="flex items-center justify-between">
+                        <Label>Contraseña</Label>
+                        <a href="/forgot-password" className="text-xs text-gold-500 hover:text-gold-400 font-bold hover:underline">
+                            ¿Olvidaste tu clave?
+                        </a>
+                    </div>
                     <Input name="password" type="password" placeholder="••••••••" className="bg-black/50 border-zinc-700 h-11" required />
                 </div>
                 {errorMessage && (
