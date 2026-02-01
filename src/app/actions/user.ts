@@ -26,7 +26,7 @@ export async function getUserBalance() {
         return 0
     }
 }
-}
+
 
 export async function getUnavailableTickets() {
     try {

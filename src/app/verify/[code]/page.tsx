@@ -111,6 +111,22 @@ export default function VerifyPage() {
 
                     <div className="h-px bg-zinc-800 w-full" />
 
+                    {/* Purchase Date */}
+                    <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0 w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center">
+                            <Calendar className="w-6 h-6 text-green-500" />
+                        </div>
+                        <div>
+                            <p className="text-sm text-zinc-400">Fecha de Compra</p>
+                            <p className="text-lg font-bold text-white">
+                                {data.createdAt ? new Date(data.createdAt).toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short' }) : "Desconocida"}
+                            </p>
+                            <p className="text-xs text-zinc-500">Transacción Confirmada</p>
+                        </div>
+                    </div>
+
+                    <div className="h-px bg-zinc-800 w-full" />
+
                     {/* Draw Info */}
                     <div className="flex items-start gap-4">
                         <div className="flex-shrink-0 w-12 h-12 bg-purple-500/10 rounded-full flex items-center justify-center">
