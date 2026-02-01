@@ -3,15 +3,20 @@
 import { useEffect, useState } from "react"
 import { verifyTicket } from "@/app/actions/verify"
 import { Loader2, ShieldCheck, CheckCircle2, Ticket, Calendar, User, Info } from "lucide-react"
-import { usePathname } from "next/navigation"
+import { useParams } from "next/navigation"
 
-export default function VerifyPage({ params }: { params: { code: string } }) {
+export default function VerifyPage() {
+    const params = useParams()
     const [loading, setLoading] = useState(true)
     const [data, setData] = useState<any>(null)
     const [error, setError] = useState("")
 
     useEffect(() => {
-        verifyTicket(params.code)
+        const code = params?.code as string;
+
+        if (!code) return; // Wait for params to be ready
+
+        verifyTicket(code)
             .then(res => {
                 if (res.success) {
                     setData(res.ticket)
@@ -21,7 +26,7 @@ export default function VerifyPage({ params }: { params: { code: string } }) {
             })
             .catch(() => setError("Error de conexión"))
             .finally(() => setLoading(false))
-    }, [params.code])
+    }, [params])
 
     if (loading) {
         return (
