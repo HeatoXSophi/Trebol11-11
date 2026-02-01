@@ -67,7 +67,7 @@ model VerificationToken {
 model Ticket {
   id         String   @id @default(cuid())
   number     String
-  serialCode String   @unique @default(cuid())
+  serialCode String   @unique @default(uuid())
   status     String   @default("AVAILABLE")
   userId     String?
   drawId     String?

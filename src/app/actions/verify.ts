@@ -4,8 +4,9 @@ import { prisma } from "@/lib/db"
 
 export async function verifyTicket(serialCode: string) {
     try {
+        const cleanCode = serialCode.trim();
         const ticket = await prisma.ticket.findUnique({
-            where: { serialCode },
+            where: { serialCode: cleanCode },
             include: {
                 user: {
                     select: {
