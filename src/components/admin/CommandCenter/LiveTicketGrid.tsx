@@ -340,5 +340,6 @@ export function LiveTicketGrid() {
                     </div>
                 </div>
             </div>
-            )
+        </div>
+    )
 }
