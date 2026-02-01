@@ -1,10 +1,33 @@
 import { NextResponse } from "next/server"
 import { PrismaClient } from "@prisma/client"
+import bcrypt from "bcryptjs"
 
 const prisma = new PrismaClient()
 
 export async function GET() {
     try {
+        // 1. Ensure Admin User Exists
+        const adminExists = await prisma.user.findFirst({
+            where: { role: "ADMIN" }
+        })
+
+        if (!adminExists) {
+            const hashedPassword = await bcrypt.hash("admin123", 10)
+            await prisma.user.create({
+                data: {
+                    name: "Super Admin",
+                    lastName: "System",
+                    identification: "00000000",
+                    phone: "+0000000000",
+                    email: "admin@system.com",
+                    password: hashedPassword,
+                    role: "ADMIN"
+                }
+            })
+            console.log("Admin user created.")
+        }
+
+        // 2. Ensure Active Draw Exists
         const activeDraw = await prisma.draw.findFirst({
             where: { status: "OPEN" }
         })
@@ -21,8 +44,10 @@ export async function GET() {
                     status: "OPEN"
                 }
             })
-            return NextResponse.json({ message: "Sorteo creado exitosamente." })
+            return NextResponse.json({ message: "Sorteo y Admin (00000000 / admin123) creados exitosamente." })
         }
+
+        return NextResponse.json({ message: "Ya existe un sorteo activo. (Admin check completed)" })
 
         return NextResponse.json({ message: "Ya existe un sorteo activo." })
     } catch (error) {
