@@ -73,6 +73,10 @@ export function LiveTicketGrid() {
         });
     }, []);
 
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 1000;
+
     // Filter Logic
     const filteredTickets = useMemo(() => {
         const result = allTickets.filter(numStr => {
@@ -88,8 +92,20 @@ export function LiveTicketGrid() {
 
             return true;
         });
-        return result.slice(0, 200); // Limit usage to first 200 items to prevent DOM overload in Vercel
+        return result;
     }, [allTickets, ticketMap, searchTerm, filter]);
+
+    // Reset page when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, filter]);
+
+    // Pagination Logic
+    const totalPages = Math.ceil(filteredTickets.length / ITEMS_PER_PAGE);
+    const paginatedTickets = filteredTickets.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
 
     const renderCentralPanel = () => {
         if (!selectedTicket) return null;
@@ -250,56 +266,71 @@ export function LiveTicketGrid() {
             </div>
 
             {/* Main Grid Viewport */}
-            <div className="flex-1 relative min-h-0 bg-zinc-950 p-1">
+            <div className="flex-1 relative min-h-0 bg-zinc-950 p-1 flex flex-col">
                 {isLoading ? (
+                    // ... loading state
                     <div className="absolute inset-0 flex items-center justify-center flex-col gap-4">
                         <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
                         <p className="text-xs text-zinc-500 animate-pulse">Sincronizando 10,000 Tickets...</p>
                     </div>
                 ) : (
-                    <div className="h-full overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-zinc-800 hover:scrollbar-thumb-zinc-600 pr-1">
-                        {/* 
-                            Grid Optimization:
-                            - minmax(55px, 1fr) ensures enough width for "8888".
-                            - contain-content or content-visibility could help if scroll lags.
-                        */}
-                        <div className="grid grid-cols-[repeat(auto-fill,minmax(46px,1fr))] gap-1 p-4 content-start pb-20">
-                            {filteredTickets.map((numStr) => {
-                                const ticketData = ticketMap[numStr];
-                                const isSold = !!ticketData && ticketData.status !== 'AVAILABLE';
-                                const isSelected = selectedTicket === numStr;
+                    <>
+                        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-zinc-800 hover:scrollbar-thumb-zinc-600 pr-1">
+                            <div className="grid grid-cols-[repeat(auto-fill,minmax(46px,1fr))] gap-1 p-4 content-start">
+                                {paginatedTickets.map((numStr) => {
 
-                                return (
-                                    <div
-                                        key={numStr}
-                                        onClick={() => setSelectedTicket(numStr)}
-                                        className={`
+                                    const ticketData = ticketMap[numStr];
+                                    const isSold = !!ticketData && ticketData.status !== 'AVAILABLE';
+                                    const isSelected = selectedTicket === numStr;
+
+                                    return (
+                                        <div
+                                            key={numStr}
+                                            onClick={() => setSelectedTicket(numStr)}
+                                            className={`
                                             aspect-square rounded-[4px] cursor-pointer transition-all duration-150 flex items-center justify-center
                                             text-[10px] font-mono font-bold tracking-tight border
                                             ${isSelected
-                                                ? 'ring-2 ring-white z-10 scale-125 shadow-[0_0_15px_rgba(255,255,255,0.5)] border-white bg-zinc-900 text-white'
-                                                : ''}
+                                                    ? 'ring-2 ring-white z-10 scale-125 shadow-[0_0_15px_rgba(255,255,255,0.5)] border-white bg-zinc-900 text-white'
+                                                    : ''}
                                             ${!isSelected && isSold
-                                                ? 'bg-red-900/40 border-red-800/50 text-red-400 hover:bg-red-800 hover:text-white shadow-[0_0_5px_rgba(220,38,38,0.1)]'
-                                                : ''}
+                                                    ? 'bg-red-900/40 border-red-800/50 text-red-400 hover:bg-red-800 hover:text-white shadow-[0_0_5px_rgba(220,38,38,0.1)]'
+                                                    : ''}
                                             ${!isSelected && !isSold
-                                                ? 'bg-zinc-900/50 border-white/5 text-zinc-600 hover:bg-emerald-900/30 hover:text-emerald-400 hover:border-emerald-500/30'
-                                                : ''}
+                                                    ? 'bg-zinc-900/50 border-white/5 text-zinc-600 hover:bg-emerald-900/30 hover:text-emerald-400 hover:border-emerald-500/30'
+                                                    : ''}
                                         `}
-                                    >
-                                        {numStr}
-                                    </div>
-                                )
-                            })}
+                                        >
+                                            {numStr}
+                                        </div>
+                                    )
+                                })}
 
-                            {/* Empty State if Search Fails */}
-                            {filteredTickets.length === 0 && (
-                                <div className="col-span-full py-20 text-center text-zinc-500">
-                                    <p>No se encontraron tickets con ese criterio.</p>
-                                </div>
-                            )}
+                                {/* Pagination Controls */}
+                            </div>
                         </div>
-                    </div>
+                        <div className="h-12 border-t border-white/5 bg-zinc-900/80 backdrop-blur flex items-center justify-between px-4 shrink-0">
+                            <div className="text-xs text-zinc-500">
+                                Página <span className="text-white font-bold">{currentPage}</span> de <span className="text-white">{totalPages || 1}</span>
+                            </div>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                    disabled={currentPage === 1}
+                                    className="px-3 py-1 bg-white/5 hover:bg-white/10 text-white text-xs disabled:opacity-50 rounded"
+                                >
+                                    Anterior
+                                </button>
+                                <button
+                                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                    disabled={currentPage === totalPages}
+                                    className="px-3 py-1 bg-white/5 hover:bg-white/10 text-white text-xs disabled:opacity-50 rounded"
+                                >
+                                    Siguiente
+                                </button>
+                            </div>
+                        </div>
+                    </>
                 )}
 
                 {/* Detail Overlay */}
@@ -309,6 +340,5 @@ export function LiveTicketGrid() {
                     </div>
                 </div>
             </div>
-        </div>
-    )
+            )
 }
