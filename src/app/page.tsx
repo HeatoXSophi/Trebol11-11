@@ -94,27 +94,25 @@ export default function Home() {
                 />
               )}
             </div>
+          </div>
 
-            <div className="absolute bottom-0 left-0 right-0 z-20 p-8 flex flex-col md:flex-row items-end justify-between gap-6">
-              <div className="text-left space-y-4">
-                <div>
-                  <p className="text-gold-500 font-bold uppercase tracking-wider text-sm mb-1">
-                    {draw?.date ? `JUEGA EL ${new Date(draw.date).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}` : "PRÓXIMAMENTE"}
-                  </p>
-                  <p className="text-zinc-300 text-sm max-w-md shadow-black drop-shadow-md">
-                    {draw?.prizeDescription || "¡El gran premio del día puede ser tuyo!"}
-                  </p>
-                </div>
-
-                {draw?.date && (
-                  <div>
-                    <p className="text-xs text-zinc-400 mb-1 uppercase tracking-widest">Tiempo Restante</p>
-                    <Countdown targetDate={draw.date} />
-                  </div>
-                )}
-              </div>
-              {/* Calculator moved here? No, let's keep it distinctive */}
+          {/* Description Below Image */}
+          <div className="mt-8 flex flex-col items-center justify-center text-center space-y-6">
+            <div className="space-y-2">
+              <p className="text-gold-500 font-bold uppercase tracking-wider text-sm">
+                {draw?.date ? `JUEGA EL ${new Date(draw.date).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}` : "PRÓXIMAMENTE"}
+              </p>
+              <p className="text-zinc-300 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+                {draw?.prizeDescription || "¡El gran premio del día puede ser tuyo!"}
+              </p>
             </div>
+
+            {draw?.date && (
+              <div className="flex flex-col items-center gap-2">
+                <p className="text-xs text-zinc-500 uppercase tracking-widest font-bold">Tiempo Restante</p>
+                <Countdown targetDate={draw.date} />
+              </div>
+            )}
           </div>
         </div>
       </section>
