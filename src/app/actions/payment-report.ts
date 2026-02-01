@@ -5,6 +5,7 @@ import { uploadFile } from "@/lib/storage"
 import { prisma } from "@/lib/db"
 import { auth } from "@/auth"
 
+// Force new deployment to activate logging fix
 export async function createPaymentReport(formData: FormData) {
     try {
         const amount = parseFloat(formData.get("amount") as string)
