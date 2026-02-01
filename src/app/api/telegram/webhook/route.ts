@@ -18,6 +18,10 @@ export async function POST(req: NextRequest) {
 
             console.log(`Callback Data: ${data}`);
 
+            const parts = data.split(":");
+            const action = parts[0];
+            const paymentId = parts[1];
+
             if (!paymentId) {
                 console.warn("Invalid callback data format");
                 return NextResponse.json({ ok: true });
