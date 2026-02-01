@@ -43,8 +43,20 @@ export async function createPaymentReport(formData: FormData) {
         revalidatePath("/admin/dashboard")
         return { success: true }
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error creating payment:", error)
-        return { success: false, error: "Error: " + (error instanceof Error ? error.message : String(error)) }
+        let errorMessage = "Error desconocido";
+        if (error instanceof Error) {
+            errorMessage = error.message;
+        } else if (typeof error === "object" && error !== null) {
+            try {
+                errorMessage = JSON.stringify(error);
+            } catch {
+                errorMessage = String(error);
+            }
+        } else {
+            errorMessage = String(error);
+        }
+        return { success: false, error: errorMessage }
     }
 }
