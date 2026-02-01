@@ -41,7 +41,6 @@ export async function sendTicketEmail(userEmail: string, userName: string, ticke
         console.error("Failed to send email:", error);
     }
 }
-}
 
 export async function sendPasswordResetEmail(email: string, token: string) {
     if (!process.env.RESEND_API_KEY) {
