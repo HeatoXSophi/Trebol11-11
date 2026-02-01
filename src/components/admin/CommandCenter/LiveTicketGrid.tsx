@@ -75,7 +75,7 @@ export function LiveTicketGrid() {
 
     // Filter Logic
     const filteredTickets = useMemo(() => {
-        return allTickets.filter(numStr => {
+        const result = allTickets.filter(numStr => {
             const ticketData = ticketMap[numStr];
             const isSold = !!ticketData && ticketData.status !== 'AVAILABLE'; // Default to available if missing
 
@@ -88,6 +88,7 @@ export function LiveTicketGrid() {
 
             return true;
         });
+        return result.slice(0, 200); // Limit usage to first 200 items to prevent DOM overload in Vercel
     }, [allTickets, ticketMap, searchTerm, filter]);
 
     const renderCentralPanel = () => {
