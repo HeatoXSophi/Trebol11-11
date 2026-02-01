@@ -85,6 +85,7 @@ model Payment {
   status       String   @default("PENDING")
   adminComment String?
   createdAt    DateTime @default(now())
+  telegramMessageIds String? // JSON string of [{chatId, messageId}]
   userId       String
   user         User     @relation(fields: [userId], references: [id])
 }

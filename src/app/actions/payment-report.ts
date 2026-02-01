@@ -35,11 +35,21 @@ export async function createPaymentReport(formData: FormData) {
             include: { user: true }
         })
 
-        // Send Telegram Notification (Fire and forget to not block UI)
-        import("@/lib/telegram").then(({ sendInteractiveNotification }) => {
+        // Send Telegram Notification and store ID
+        try {
+            const { sendInteractiveNotification } = await import("@/lib/telegram");
             const userName = payment.user.name || payment.user.email || "Usuario";
-            sendInteractiveNotification(payment.id, amount.toString(), userName, proofImagePath);
-        }).catch(err => console.error("Failed to load telegram lib", err));
+            const sentMessages = await sendInteractiveNotification(payment.id, amount.toString(), userName, proofImagePath);
+
+            if (sentMessages.length > 0) {
+                await prisma.payment.update({
+                    where: { id: payment.id },
+                    data: { telegramMessageIds: JSON.stringify(sentMessages) }
+                });
+            }
+        } catch (err) {
+            console.error("Failed to process telegram notification", err);
+        }
 
         revalidatePath("/admin/dashboard")
         return { success: true }

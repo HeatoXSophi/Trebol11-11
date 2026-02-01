@@ -47,17 +47,19 @@ export async function sendInteractiveNotification(paymentId: string, amount: str
     const token = process.env.TELEGRAM_BOT_TOKEN;
     const chatIds = process.env.TELEGRAM_ADMIN_CHAT_ID?.split(",") || [];
 
-    if (!token || chatIds.length === 0) return;
+    if (!token || chatIds.length === 0) return [];
 
     const message = `💰 *Nuevo Pago Reportado*\n\n👤 *Usuario:* ${userName}\n💵 *Monto:* ${amount}\n\nRevisa el comprobante y decide:`;
     const photoUrl = `https://api.telegram.org/bot${token}/sendPhoto`;
+
+    const sentMessages = [];
 
     try {
         for (const chatId of chatIds) {
             const id = chatId.trim();
             if (!id) continue;
 
-            await fetch(photoUrl, {
+            const res = await fetch(photoUrl, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -75,8 +77,45 @@ export async function sendInteractiveNotification(paymentId: string, amount: str
                     }
                 })
             });
+            const data = await res.json();
+            if (data.ok && data.result) {
+                sentMessages.push({ chatId: id, messageId: data.result.message_id });
+            }
         }
     } catch (error) {
         console.error("Error sending interactive telegram msg:", error);
+    }
+    return sentMessages;
+}
+
+export async function updatePaymentStatusMessage(chatId: string, messageId: number, status: "APPROVED" | "REJECTED", adminName: string = "Admin") {
+    const token = process.env.TELEGRAM_BOT_TOKEN;
+    if (!token) return;
+
+    const url = `https://api.telegram.org/bot${token}/editMessageCaption`;
+
+    // Status Text
+    const statusIcon = status === "APPROVED" ? "✅" : "❌";
+    const statusText = status === "APPROVED" ? "Aprobado" : "Rechazado";
+    const color = status === "APPROVED" ? "VERDE" : "ROJO"; // Telegram markdown doesn't support color validation easily, just icons.
+
+    const newCaption = `💰 *Pago Procesado*\n\nEstado: ${statusIcon} *${statusText}*\nAtendido por: ${adminName}`;
+
+    try {
+        await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                chat_id: chatId,
+                message_id: messageId,
+                caption: newCaption,
+                parse_mode: "Markdown",
+                reply_markup: {
+                    inline_keyboard: [] // Remove buttons
+                }
+            })
+        });
+    } catch (error) {
+        console.error("Error updating telegram message:", error);
     }
 }

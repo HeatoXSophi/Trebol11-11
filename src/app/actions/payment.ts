@@ -34,6 +34,15 @@ export async function approvePayment(paymentId: string) {
             }
         })
 
+        // 3. Update Telegram Message
+        if (payment.telegramMessageIds) {
+            const messages = JSON.parse(payment.telegramMessageIds);
+            const { updatePaymentStatusMessage } = await import("@/lib/telegram");
+            for (const msg of messages) {
+                await updatePaymentStatusMessage(msg.chatId, msg.messageId, "APPROVED");
+            }
+        }
+
         revalidatePath("/admin/dashboard")
         return { success: true }
     } catch (error) {
@@ -48,6 +57,16 @@ export async function rejectPayment(paymentId: string) {
             where: { id: paymentId },
             data: { status: "REJECTED" }
         })
+
+        // 2. Update Telegram
+        const paymentData = await prisma.payment.findUnique({ where: { id: paymentId } });
+        if (paymentData?.telegramMessageIds) {
+            const messages = JSON.parse(paymentData.telegramMessageIds);
+            const { updatePaymentStatusMessage } = await import("@/lib/telegram");
+            for (const msg of messages) {
+                await updatePaymentStatusMessage(msg.chatId, msg.messageId, "REJECTED");
+            }
+        }
 
         revalidatePath("/admin/dashboard")
         return { success: true }
