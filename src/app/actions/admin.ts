@@ -70,6 +70,13 @@ export async function updateDrawConfig(formData: FormData) {
 
         if (!drawId) {
             console.log("Creating NEW draw...")
+
+            // 1. Auto-Close any existing OPEN draws to prevent confusion
+            await prisma.draw.updateMany({
+                where: { status: "OPEN" },
+                data: { status: "CLOSED" }
+            })
+
             await prisma.draw.create({
                 data: {
                     date: drawDate,
