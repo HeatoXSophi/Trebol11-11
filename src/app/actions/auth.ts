@@ -75,7 +75,7 @@ export async function register(prevState: string | undefined, formData: FormData
         // 3. Auto Login
         await signIn("credentials", {
             identification,
-            phone,
+            password,
             redirectTo: "/profile"
         })
 

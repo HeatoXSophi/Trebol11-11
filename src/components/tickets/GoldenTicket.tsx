@@ -15,7 +15,11 @@ interface GoldenTicketProps {
 
 export function GoldenTicket({ ticketNumber, drawDate, price = 2, userName, serialCode, purchaseDate }: GoldenTicketProps) {
     // URL for the QR code to make it "functional" (opens scanner)
-    const verificationUrl = `https://trebol11-11.com/verify?serial=${serialCode || ticketNumber}`
+    // URL for the QR code to make it "functional" (opens scanner)
+    // Use window.location.origin if available, otherwise relative path might not work for QR scanners (needs absolute)
+    // Fallback for SSR where window is undefined
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://trebol11-11.com'
+    const verificationUrl = `${origin}/verify/${serialCode || "INVALID"}`
 
     return (
         <div className="relative w-full max-w-md mx-auto aspect-[9/16] md:aspect-[3/4] bg-gradient-to-br from-yellow-100 via-yellow-300 to-yellow-500 rounded-3xl p-1 shadow-2xl overflow-hidden border-4 border-yellow-600">
