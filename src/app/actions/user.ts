@@ -26,6 +26,34 @@ export async function getUserBalance() {
         return 0
     }
 }
+}
+
+export async function getUnavailableTickets() {
+    try {
+        const draw = await prisma.draw.findFirst({
+            where: { status: "OPEN" },
+            orderBy: { date: 'desc' }
+        })
+
+        if (!draw) return []
+
+        const soldTickets = await prisma.ticket.findMany({
+            where: {
+                drawId: draw.id,
+                OR: [
+                    { status: "SOLD" },
+                    { userId: { not: null } }
+                ]
+            },
+            select: { number: true }
+        })
+
+        return soldTickets.map(t => t.number)
+    } catch (error) {
+        console.error("Error fetching unavailable tickets:", error)
+        return []
+    }
+}
 
 export async function buyTickets(numbers: string[]) {
     const session = await auth()
