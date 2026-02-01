@@ -1,6 +1,7 @@
+
 import { auth } from "@/auth"
 import { redirect } from "next/navigation"
-import { PrismaClient } from "@prisma/client"
+import { prisma } from "@/lib/db"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -10,7 +11,7 @@ import Link from "next/link"
 import { GoldenTicket } from "@/components/tickets/GoldenTicket"
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog"
 
-const prisma = new PrismaClient()
+
 
 async function getProfileData(userId: string) {
     const user = await prisma.user.findUnique({
@@ -139,7 +140,7 @@ export default async function ProfilePage() {
                             {user.payments.length > 0 ? user.payments.map(payment => (
                                 <div key={payment.id} className="bg-zinc-900/30 border border-white/5 rounded-xl p-4 flex justify-between items-center">
                                     <div className="flex items-center gap-3">
-                                        <div className={`p-2 rounded-full ${payment.status === 'APPROVED' ? 'bg-green-500/10 text-green-500' : 'bg-yellow-500/10 text-yellow-500'}`}>
+                                        <div className={`p - 2 rounded - full ${payment.status === 'APPROVED' ? 'bg-green-500/10 text-green-500' : 'bg-yellow-500/10 text-yellow-500'} `}>
                                             <ArrowUpRight className="w-4 h-4" />
                                         </div>
                                         <div>
@@ -149,7 +150,7 @@ export default async function ProfilePage() {
                                     </div>
                                     <div className="text-right">
                                         <div className="font-bold text-white">+${payment.amount.toFixed(2)}</div>
-                                        <span className={`text-[10px] font-bold ${payment.status === 'APPROVED' ? 'text-green-500' : 'text-yellow-600'}`}>
+                                        <span className={`text - [10px] font - bold ${payment.status === 'APPROVED' ? 'text-green-500' : 'text-yellow-600'} `}>
                                             {payment.status === 'APPROVED' ? 'COMPLETADO' : 'PENDIENTE'}
                                         </span>
                                     </div>

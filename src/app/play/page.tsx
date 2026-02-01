@@ -1,9 +1,7 @@
 import { auth } from "@/auth"
 import { redirect } from "next/navigation"
-import { PrismaClient } from "@prisma/client"
+import { prisma } from "@/lib/db"
 import { GameInterface } from "@/components/game/GameInterface"
-
-const prisma = new PrismaClient()
 
 async function getActiveDraw() {
     return await prisma.draw.findFirst({

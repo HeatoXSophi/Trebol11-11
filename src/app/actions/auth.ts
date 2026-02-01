@@ -3,9 +3,8 @@
 import { signIn } from "@/auth"
 import { PrismaClient } from "@prisma/client"
 import { AuthError } from "next-auth"
+import { prisma } from "@/lib/db"
 import bcrypt from "bcryptjs"
-
-const prisma = new PrismaClient()
 
 export async function register(prevState: string | undefined, formData: FormData) {
     try {

@@ -1,11 +1,9 @@
 "use server"
 
-import { PrismaClient } from "@prisma/client"
 import { revalidatePath } from "next/cache"
 import { uploadFile } from "@/lib/storage"
+import { prisma } from "@/lib/db"
 import { auth } from "@/auth"
-
-const prisma = new PrismaClient()
 
 export async function createPaymentReport(formData: FormData) {
     try {

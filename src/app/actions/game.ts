@@ -1,11 +1,9 @@
 "use server"
 
 import { auth } from "@/auth"
-import { PrismaClient } from "@prisma/client"
+import { prisma } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 // import { sendTicketEmail } from "@/lib/email" // TODO: Implement later
-
-const prisma = new PrismaClient()
 
 export async function buyTickets(numbers: string[], drawId: string) {
     const session = await auth()

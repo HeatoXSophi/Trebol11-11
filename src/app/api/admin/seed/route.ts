@@ -1,8 +1,7 @@
-import { NextResponse } from "next/server"
-import { PrismaClient } from "@prisma/client"
-import bcrypt from "bcryptjs"
 
-const prisma = new PrismaClient()
+import { NextResponse } from "next/server"
+import { prisma } from "@/lib/db"
+import bcrypt from "bcryptjs"
 
 export async function GET() {
     try {
@@ -49,7 +48,7 @@ export async function GET() {
 
         return NextResponse.json({ message: "Ya existe un sorteo activo. (Admin check completed)" })
 
-        return NextResponse.json({ message: "Ya existe un sorteo activo." })
+
     } catch (error) {
         return NextResponse.json({ error: "Error seeding database" }, { status: 500 })
     }

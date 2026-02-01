@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db"
 const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 
 // This handle responds to Telegram Webhook updates (like button clicks)
