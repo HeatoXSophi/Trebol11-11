@@ -122,7 +122,7 @@ export function LiveTicketGrid() {
                             #{selectedTicket}
                         </h3>
                         <p className="text-white/60 text-xs font-mono uppercase tracking-widest mt-1">
-                            {ticketData.serialCode ? `Serial: ${ticketData.serialCode.slice(-6).toUpperCase()}` : 'Ticket Único'}
+                            {ticketData?.serialCode ? `Serial: ${ticketData.serialCode.slice(-6).toUpperCase()}` : 'Ticket Único'}
                         </p>
                     </div>
                     <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${isSold ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'}`}>
@@ -137,13 +137,13 @@ export function LiveTicketGrid() {
                                 <h4 className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Detalles del Comprador</h4>
                                 <div className="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors cursor-pointer group">
                                     <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg uppercase">
-                                        {ticketData.user?.name?.[0] || 'U'}{ticketData.user?.lastName?.[0] || ''}
+                                        {ticketData?.user?.name?.[0] || 'U'}{ticketData?.user?.lastName?.[0] || ''}
                                     </div>
                                     <div className="flex-1">
                                         <p className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors">
-                                            {ticketData.user?.name} {ticketData.user?.lastName}
+                                            {ticketData?.user?.name} {ticketData?.user?.lastName}
                                         </p>
-                                        <p className="text-xs text-zinc-500 font-mono">{ticketData.user?.phone || 'No Phone'}</p>
+                                        <p className="text-xs text-zinc-500 font-mono">{ticketData?.user?.phone || 'No Phone'}</p>
                                     </div>
                                     <button className="text-zinc-600 hover:text-white" title="Ver Perfil"><ExternalLink className="w-4 h-4" /></button>
                                 </div>
@@ -201,9 +201,9 @@ export function LiveTicketGrid() {
                             <p className="text-sm text-zinc-400 max-w-xs mx-auto">
                                 El número <span className="text-white font-bold">#{selectedTicket}</span> está libre.
                             </p>
-                            <button className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all transform hover:scale-[1.02]">
+                            {/* <button className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all transform hover:scale-[1.02]">
                                 Asignar Manualmente
-                            </button>
+                            </button> */}
                         </div>
                     )}
                 </div>
