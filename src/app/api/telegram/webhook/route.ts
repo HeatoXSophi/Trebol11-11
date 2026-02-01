@@ -18,14 +18,14 @@ export async function POST(req: NextRequest) {
 
             console.log(`Callback Data: ${data}`);
 
-            const parts = data.split(":");
-            const action = parts[0];
-            const paymentId = parts[1];
-
             if (!paymentId) {
                 console.warn("Invalid callback data format");
                 return NextResponse.json({ ok: true });
             }
+
+            // ⚡ UX IMPORTANTE: Responder RÁPIDO a Telegram para quitar el "cargando..."
+            // "Processing..." feedback loop
+            await answerCallback(query.id, "🔄 Procesando...");
 
             // Find Payment
             const payment = await prisma.payment.findUnique({
@@ -35,14 +35,15 @@ export async function POST(req: NextRequest) {
 
             if (!payment) {
                 console.error("Payment not found:", paymentId);
-                await answerCallback(query.id, "Pago no encontrado");
+                // We already answered, so we can't answer again with error, but we can try editing text if we had messageId
                 return NextResponse.json({ ok: true });
             }
 
             console.log(`Processing ${action} for payment ${paymentId} (Status: ${payment.status})`);
 
             if (payment.status !== "PENDING") {
-                await answerCallback(query.id, "Este pago ya fue procesado");
+                // Warning: answerCallback might fail if called twice quickly, but usually overrides or ignores
+                await editMessageCaption(chatId, messageId, `⚠️ Este pago ya está ${payment.status === 'APPROVED' ? 'APROBADO' : 'RECHAZADO'}`);
                 return NextResponse.json({ ok: true });
             }
 
