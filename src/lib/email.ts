@@ -41,3 +41,36 @@ export async function sendTicketEmail(userEmail: string, userName: string, ticke
         console.error("Failed to send email:", error);
     }
 }
+}
+
+export async function sendPasswordResetEmail(email: string, token: string) {
+    if (!process.env.RESEND_API_KEY) {
+        console.warn("Resend API Key missing. Skipping email.");
+        return;
+    }
+
+    const resetLink = `https://trebol11-11.com/reset-password?token=${token}`;
+
+    try {
+        await resend.emails.send({
+            from: 'Soporte Trebol <support@resend.dev>',
+            to: email,
+            subject: '🔑 Restablecer Contraseña',
+            html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h1 style="color: #d4af37;">Recuperación de Cuenta</h1>
+                    <p>Has solicitado restablecer tu contraseña. Haz clic en el siguiente botón:</p>
+                    
+                    <a href="${resetLink}" style="display: inline-block; background-color: #d4af37; color: #000; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 20px 0;">
+                        Restablecer Contraseña
+                    </a>
+
+                    <p style="font-size: 12px; color: #888;">Si no solicitaste esto, ignora este mensaje. El enlace expira en 1 hora.</p>
+                </div>
+            `
+        });
+        console.log(`Reset email sent to ${email}`);
+    } catch (error) {
+        console.error("Failed to send reset email:", error);
+    }
+}
