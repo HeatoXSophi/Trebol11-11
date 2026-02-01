@@ -27,7 +27,7 @@ export function DrawConfigPanel() {
             alert("¡Premio actualizado! Revise la página de inicio.")
             window.location.reload() // Refresh to see changes or re-fetch
         } else {
-            alert("Error al guardar")
+            alert("Error al guardar: " + (res.error || "Desconocido"))
         }
     }
 

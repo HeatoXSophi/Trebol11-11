@@ -104,7 +104,7 @@ export async function updateDrawConfig(formData: FormData) {
         return { success: true }
     } catch (error) {
         console.error("Error updating draw config:", error)
-        return { success: false, error: "Error al guardar la configuración" }
+        return { success: false, error: error instanceof Error ? error.message : "Error desconocido al guardar" }
     }
 }
 
